@@ -8,3 +8,6 @@ xoroshiro = { version = "0.0.1", optional = true }
 
 [dev-dependencies]
 xoroshiro = "0.0.1"
+
+[profile.release]
+debug = true
