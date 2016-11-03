@@ -1,0 +1,6 @@
+[package]
+authors = ["Ceri Storey <cez@necrofish.org.uk>"]
+name = "jump-ch"
+version = "0.1.0"
+[dependencies]
+rand = "*"
