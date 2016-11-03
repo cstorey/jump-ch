@@ -12,15 +12,11 @@ pub trait RandFromKey: Rng {
 
 impl RandFromKey for XorShiftRng {
     fn from_key(mut key: u64) -> Self {
-        // Avoid all-zero seeds.
-        key = key.saturating_add(1);
         let hi = (key >> 32) as u32;
         let lo = key as u32;
-        let seed = [hi, lo, hi, lo];
-        let mut g = XorShiftRng::from_seed(seed);
-        let _ = g.next_u64();
-        let _ = g.next_u64();
-        g
+
+        let seed = [0x193a6754 ^ hi , 0xa8a7d469 ^ lo , 0x97830e05 ^ hi, 0x113ba7bb ^ lo];
+        XorShiftRng::from_seed(seed)
     }
 }
 
@@ -36,11 +32,8 @@ impl RandFromKey for ChaChaRng {
 #[cfg(feature="xoroshiro")]
 impl RandFromKey for xoroshiro::XoroShiroRng {
     fn from_key(mut key: u64) -> Self {
-        key = key.saturating_add(1);
-        let seed = [!key, key];
-        let mut g = xoroshiro::XoroShiroRng::from_seed(seed);
-        g.next_u64();
-        g
+        let seed = [0x193a6754a8a7d469 ^ key, 0x97830e05113ba7bb ^ key];
+        xoroshiro::XoroShiroRng::from_seed(seed)
     }
 }
 
@@ -53,9 +46,9 @@ pub fn jump_ch<R>(key: u64, nbuckets: u32) -> u32
     while j < nbuckets {
         b = j;
         let r = g.next_f32() as f64;
-        // j = ((b + 1) as f64 / r).floor() as u32;
-        j = ((((b + 1) as u64) << 32) / (1 + g.next_u32() as u64)) as u32;
-        println!("b:{}; j:{}; r:{}", b, j, r);
+        j = ((b + 1) as f64 / r).floor() as u32;
+        // j = ((((b + 1) as u64) << 32) / (1 + g.next_u32() as u64)) as u32;
+        // println!("b:{}; j:{}; r:{}", b, j, r);
     }
 
     b
