@@ -1,15 +1,16 @@
 extern crate rand;
+#[cfg(feature="xoroshiro")]
+extern crate xoroshiro;
+
 use rand::{Rng, SeedableRng, StdRng};
 use rand::XorShiftRng;
 use rand::chacha::ChaChaRng;
 
-pub trait RandFromKey {
-    type Rng: Rng;
-    fn from_key(key: u64) -> Self::Rng;
+pub trait RandFromKey: Rng {
+    fn from_key(key: u64) -> Self;
 }
 
 impl RandFromKey for XorShiftRng {
-    type Rng = XorShiftRng;
     fn from_key(key: u64) -> Self {
         let seed = [0, 0, (key >> 32) as u32, key as u32];
         XorShiftRng::from_seed(seed)
@@ -17,15 +18,21 @@ impl RandFromKey for XorShiftRng {
 }
 
 impl RandFromKey for ChaChaRng {
-    type Rng = ChaChaRng;
     fn from_key(key: u64) -> Self {
         let seed = [0, 0, (key >> 32) as u32, key as u32];
         ChaChaRng::from_seed(&seed)
     }
 }
 
+#[cfg(feature="xoroshiro")]
+impl RandFromKey for xoroshiro::XoroShiroRng {
+    fn from_key(key: u64) -> Self {
+        let seed = [0, key];
+        xoroshiro::XoroShiroRng::from_seed(seed)
+    }
+}
 
-pub fn jump_ch<R = XorShiftRng>(key: u64, nbuckets: u64) -> u64
+pub fn jump_ch<R>(key: u64, nbuckets: u64) -> u64
     where R: RandFromKey
 {
     let mut g = R::from_key(key);

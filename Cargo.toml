@@ -4,3 +4,7 @@ name = "jump-ch"
 version = "0.1.0"
 [dependencies]
 rand = "*"
+xoroshiro = { version = "0.0.1", optional = true }
+
+[dev-dependencies]
+xoroshiro = "0.0.1"
