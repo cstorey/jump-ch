@@ -48,3 +48,18 @@ mod xoroshiro_ {
     #[bench] fn ch_2pow08(b: &mut Bencher) { bench_for::<XoroShiroRng>(b, 1 << 8)}
     #[bench] fn ch_2pow10(b: &mut Bencher) { bench_for::<XoroShiroRng>(b, 1 << 10)}
 }
+
+// the LCG generator given in the paper.
+mod lcg {
+    use test::Bencher;
+    use super::bench_for;
+    use rand::Rng;
+    use jump_ch::RandFromKey;
+    use jump_ch::LcgRng;
+    #[bench] fn ch_2pow00(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 0)}
+    #[bench] fn ch_2pow02(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 2)}
+    #[bench] fn ch_2pow04(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 4)}
+    #[bench] fn ch_2pow06(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 6)}
+    #[bench] fn ch_2pow08(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 8)}
+    #[bench] fn ch_2pow10(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 10)}
+}
