@@ -7,7 +7,7 @@ extern crate xoroshiro;
 use jump_ch::RandFromKey;
 use test::Bencher;
 
-fn bench_for<R:RandFromKey>(b: &mut Bencher, buckets: u64) {
+fn bench_for<R:RandFromKey>(b: &mut Bencher, buckets: u32) {
     let k = rand::random::<u64>();
     b.iter(|| jump_ch::jump_ch::<R>(k, buckets));
 }

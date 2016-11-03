@@ -32,7 +32,7 @@ impl RandFromKey for xoroshiro::XoroShiroRng {
     }
 }
 
-pub fn jump_ch<R>(key: u64, nbuckets: u64) -> u64
+pub fn jump_ch<R>(key: u64, nbuckets: u32) -> u32
     where R: RandFromKey
 {
     let mut g = R::from_key(key);
@@ -40,8 +40,11 @@ pub fn jump_ch<R>(key: u64, nbuckets: u64) -> u64
     let mut j = 0;
     while j < nbuckets {
         b = j;
-        j = ((b + 1) as f64 / g.next_f64()).floor() as u64;
+        j = ((((b + 1) as u64) << 32) / (1 + g.next_u32() as u64)) as u32;
     }
 
     b
 }
+
+#[cfg(test)]
+mod test {}
