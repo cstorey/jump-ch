@@ -2,9 +2,12 @@ extern crate rand;
 #[cfg(feature="xoroshiro")]
 extern crate xoroshiro;
 
+mod lcg;
+
 use rand::{Rng, SeedableRng};
 use rand::XorShiftRng;
 use rand::chacha::ChaChaRng;
+pub use lcg::LcgRng;
 
 pub trait RandFromKey: Rng {
     fn from_key(key: u64) -> Self;
@@ -60,32 +63,15 @@ pub fn jump_ch<R>(key: u64, nbuckets: u32) -> u32
     b
 }
 
-    pub struct LcgRng(u64);
-
-    impl RandFromKey for LcgRng {
-        fn from_key(key: u64) -> LcgRng {
-            LcgRng(key)
-        }
-    }
-    impl Rng for LcgRng {
-        fn next_u32(&mut self) -> u32 {
-            let &mut LcgRng(ref mut state) = self;
-            *state = state.wrapping_mul(2862933555777941757) +1;
-            *state as u32
-        }
-    }
-
-
 #[cfg(test)]
 pub mod test {
-    use std::collections::BTreeMap;
     use std::iter;
-    use super::{jump_ch, RandFromKey,LcgRng};
-    use rand::{Rng, SeedableRng, XorShiftRng};
+    use super::{jump_ch, RandFromKey, LcgRng};
+    use rand::{XorShiftRng};
     #[cfg(feature="xoroshiro")]
     use xoroshiro::XoroShiroRng;
 
-    fn test_distribution<R:RandFromKey>() {
+    fn test_distribution<R: RandFromKey>() {
         let nbuckets: u32 = 16;
         let nkeys = 1 << 16;
         let mut histogram = iter::repeat(0).take(nbuckets as usize).collect::<Vec<usize>>();

@@ -54,7 +54,6 @@ mod lcg {
     use test::Bencher;
     use super::bench_for;
     use rand::Rng;
-    use jump_ch::RandFromKey;
     use jump_ch::LcgRng;
     #[bench] fn ch_2pow00(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 0)}
     #[bench] fn ch_2pow02(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 2)}
