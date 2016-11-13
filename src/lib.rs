@@ -3,11 +3,13 @@ extern crate rand;
 extern crate xoroshiro;
 
 mod lcg;
+mod tyche;
 
 use rand::{Rng, SeedableRng};
 use rand::XorShiftRng;
 use rand::chacha::ChaChaRng;
 pub use lcg::LcgRng;
+pub use tyche::{TycheRng, Tyche1Rng};
 
 pub trait RandFromKey: Rng {
     fn from_key(key: u64) -> Self;
@@ -45,6 +47,11 @@ impl RandFromKey for xoroshiro::XoroShiroRng {
     }
 }
 
+#[inline(never)]
+fn next_u32<R: RandFromKey>(g: &mut R) -> u32 {
+    g.next_u32()
+}
+
 pub fn jump_ch<R>(key: u64, nbuckets: u32) -> u32
     where R: RandFromKey
 {
@@ -55,7 +62,7 @@ pub fn jump_ch<R>(key: u64, nbuckets: u32) -> u32
         b = j;
         // let r = g.next_f32() as f64;
         // j = ((b + 1) as f64 / r).floor() as u32;
-        let r = g.next_u32() as u64;
+        let r = next_u32(&mut g) as u64;
         j = ((((b + 1) as u64) << 32) / (1 + r)) as u32;
         // println!("b:{}; j:{}; r:{}", b, j, r);
     }
@@ -66,12 +73,12 @@ pub fn jump_ch<R>(key: u64, nbuckets: u32) -> u32
 #[cfg(test)]
 pub mod test {
     use std::iter;
-    use super::{jump_ch, RandFromKey, LcgRng};
-    use rand::{XorShiftRng};
+    use super::{jump_ch, RandFromKey, LcgRng, TycheRng, Tyche1Rng};
+    use rand::XorShiftRng;
     #[cfg(feature="xoroshiro")]
     use xoroshiro::XoroShiroRng;
 
-    fn test_distribution<R: RandFromKey>() {
+    fn test_distribution<R: RandFromKey>(label: &str) {
         let nbuckets: u32 = 16;
         let nkeys = 1 << 16;
         let mut histogram = iter::repeat(0).take(nbuckets as usize).collect::<Vec<usize>>();
@@ -82,7 +89,8 @@ pub mod test {
             histogram[bucket as usize] += 1;
         }
 
-        println!("xorshift Dist for {} keys, {} buckets: {:#?}",
+        println!("{} Dist for {} keys, {} buckets: {:#?}",
+                 label,
                  nkeys,
                  nbuckets,
                  histogram);
@@ -90,18 +98,27 @@ pub mod test {
 
     #[test]
     fn test_distribution_xorshift() {
-        test_distribution::<XorShiftRng>();
+        test_distribution::<XorShiftRng>("XorShiftRng");
     }
 
     #[test]
     fn test_distribution_lcg() {
-        test_distribution::<LcgRng>();
+        test_distribution::<LcgRng>("LcgRng");
     }
 
+
+    #[test]
+    fn test_distribution_tyche() {
+        test_distribution::<TycheRng>("TycheRng");
+    }
+    #[test]
+    fn test_distribution_tyche1() {
+        test_distribution::<Tyche1Rng>("Tyche1Rng");
+    }
 
     #[cfg(feature="xoroshiro")]
     #[test]
     fn test_distribution_xoroshiro() {
-        test_distribution::<XoroShiroRng>();
+        test_distribution::<XoroShiroRng>("XoroShiroRng");
     }
 }

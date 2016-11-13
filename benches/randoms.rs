@@ -53,7 +53,6 @@ mod xoroshiro_ {
 mod lcg {
     use test::Bencher;
     use super::bench_for;
-    use rand::Rng;
     use jump_ch::LcgRng;
     #[bench] fn ch_2pow00(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 0)}
     #[bench] fn ch_2pow02(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 2)}
@@ -61,4 +60,27 @@ mod lcg {
     #[bench] fn ch_2pow06(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 6)}
     #[bench] fn ch_2pow08(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 8)}
     #[bench] fn ch_2pow10(b: &mut Bencher) { bench_for::<LcgRng>(b, 1 << 10)}
+}
+
+mod tyche {
+    use test::Bencher;
+    use super::bench_for;
+    use jump_ch::TycheRng;
+    #[bench] fn ch_2pow00(b: &mut Bencher) { bench_for::<TycheRng>(b, 1 << 0)}
+    #[bench] fn ch_2pow02(b: &mut Bencher) { bench_for::<TycheRng>(b, 1 << 2)}
+    #[bench] fn ch_2pow04(b: &mut Bencher) { bench_for::<TycheRng>(b, 1 << 4)}
+    #[bench] fn ch_2pow06(b: &mut Bencher) { bench_for::<TycheRng>(b, 1 << 6)}
+    #[bench] fn ch_2pow08(b: &mut Bencher) { bench_for::<TycheRng>(b, 1 << 8)}
+    #[bench] fn ch_2pow10(b: &mut Bencher) { bench_for::<TycheRng>(b, 1 << 10)}
+}
+mod tyche1 {
+    use test::Bencher;
+    use super::bench_for;
+    use jump_ch::Tyche1Rng;
+    #[bench] fn ch_2pow00(b: &mut Bencher) { bench_for::<Tyche1Rng>(b, 1 << 0)}
+    #[bench] fn ch_2pow02(b: &mut Bencher) { bench_for::<Tyche1Rng>(b, 1 << 2)}
+    #[bench] fn ch_2pow04(b: &mut Bencher) { bench_for::<Tyche1Rng>(b, 1 << 4)}
+    #[bench] fn ch_2pow06(b: &mut Bencher) { bench_for::<Tyche1Rng>(b, 1 << 6)}
+    #[bench] fn ch_2pow08(b: &mut Bencher) { bench_for::<Tyche1Rng>(b, 1 << 8)}
+    #[bench] fn ch_2pow10(b: &mut Bencher) { bench_for::<Tyche1Rng>(b, 1 << 10)}
 }

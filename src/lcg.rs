@@ -1,4 +1,4 @@
-use rand::{Rng};
+use rand::Rng;
 use RandFromKey;
 pub struct LcgRng(u64);
 
